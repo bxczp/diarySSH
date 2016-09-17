@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE struts PUBLIC  
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"  
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 配置上传文件的最大值 -->
+	<constant name="struts.multipart.maxSize" value="20971520" />
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<!-- 配置请求后缀 配置后缀 那么 所有请求后 都应该加上 否则404错误 -->
+	<constant name="struts.action.extension" value="action" />
+
+	<package name="diary" namespace="/" extends="struts-default">
+
+		<!-- 配置拦截器 -->
+		<!-- <interceptors> -->
+		<!-- <interceptor name="loginInterceptor" class="com.bx.interceptor.LoginInterceptor"></interceptor> -->
+		<!-- <interceptor-stack name="myStack"> -->
+		<!-- <interceptor-ref name="loginInterceptor"></interceptor-ref> -->
+		<!-- <interceptor-ref name="defaultStack"></interceptor-ref> -->
+		<!-- </interceptor-stack> -->
+		<!-- </interceptors> -->
+
+		<!-- 引用拦截器 -->
+		<!-- <default-interceptor-ref name="myStack"></default-interceptor-ref> -->
+
+		<global-results>
+			<result name="login">/login.jsp</result>
+		</global-results>
+
+
+		<action name="login_*" class="com.bx.action.LoginAction"
+			method="{1}">
+			<!-- <interceptor-ref name="defaultStack"></interceptor-ref> -->
+			<result name="success" type="redirectAction">main.action</result>
+			<result name="error">/login.jsp</result>
+		</action>
+
+		<!-- 使用 通配符 匹配方法 若*没值，就用默认方法 -->
+		<action name="user_*" class="com.bx.action.UserAction" method="{1}">
+
+			<interceptor-ref name="fileUpload">
+				<param name="allowedTypes">image/bmp,image/x-png,image/gif,image/jpg,image/jpeg</param>
+				<param name="maximumSize">2000000</param>
+			</interceptor-ref>
+
+			<!-- <interceptor-ref name="loginInterceptor"></interceptor-ref> -->
+
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+
+			<result name="success" type="redirectAction">main.action</result>
+			<result name="error">/login.jsp</result>
+			<result name="preSave">/mainTemp.jsp</result>
+		</action>
+
+		<action name="main" class="com.bx.action.MainAction">
+			<result name="success">/mainTemp.jsp</result>
+		</action>
+
+
+		<action name="diary_*" class="com.bx.action.DiaryAction"
+			method="{1}">
+			<result name="show">/mainTemp.jsp</result>
+			<result name="preSave">/mainTemp.jsp</result>
+			<result name="save" type="redirectAction">main.action</result>
+			<result name="delete" type="redirectAction">main.action</result>
+		</action>
+
+		<action name="diaryType_*" class="com.bx.action.DiaryTypeAction"
+			method="{1}">
+			<result name="list">/mainTemp.jsp</result>
+			<result name="preSave">/mainTemp.jsp</result>
+			<result name="save" type="redirectAction">diaryType_list.action</result>
+		</action>
+
+
+	</package>
+</struts>   
